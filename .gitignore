@@ -1,5 +1,5 @@
 *
 !*.py
 !.gitignore
-!/assets/*.ico
+!/*.ico
 !build.cmd

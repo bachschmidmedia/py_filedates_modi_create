@@ -6,7 +6,7 @@ import glob
 from win32_setctime import setctime
 import PySimpleGUI as sg
 
-# Script
+# Variables
 script = os.path.basename(__file__)
 date = datetime.datetime.now()
 date_str = date.strftime('%m/%d/%Y %H:%M:%S')
@@ -14,6 +14,7 @@ modTime = time.mktime(date.timetuple())
 user_os = platform.system()
 my_list = []
 l_count = 0
+s_update_files = 'Dateien (Datum) anpassen'
 
 
 # Set Modification-Datetime to File
@@ -66,12 +67,15 @@ def set_file_dates():
 
 # Main Process
 def runMain():
-    s_update_files = 'Dateien (Datum) anpassen'
     global l_count
+    global s_update_files
 
     # SG Theme
     sg.theme('LightBlue2')  # Add a touch of color
 
+    # SG Icons
+    root = os.path.split(__file__)[0]
+    images = os.path.join(root, 'assets/icon.ico')
 
     # All the stuff inside your window.
 
@@ -87,7 +91,7 @@ def runMain():
     ]
 
     # Create the Window
-    window = sg.Window('Datei-Daten anpassen', layout).Finalize()
+    window = sg.Window('Datei-Daten anpassen', layout, icon=images).Finalize()
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
