@@ -3,3 +3,4 @@
 !.gitignore
 !/*.ico
 !build.cmd
+!/dist/*.exe

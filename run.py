@@ -8,19 +8,28 @@ import PySimpleGUI as sg
 
 # Variables
 script = os.path.basename(__file__)
-date = datetime.datetime.now()
-date_str = date.strftime('%m/%d/%Y %H:%M:%S')
-modTime = time.mktime(date.timetuple())
 user_os = platform.system()
 my_list = []
 l_count = 0
 s_update_files = 'Dateien (Datum) anpassen'
 
+# Get the Date
+def get_date():
+    return datetime.datetime.now()
+
+
+def get_date_str():
+    d = get_date()
+    return d.strftime('%m/%d/%Y %H:%M:%S')
+
+
+def get_mod_time():
+    d = get_date()
+    return time.mktime(d.timetuple())
 
 # Set Modification-Datetime to File
 def set_modification_time(filepath):
-    os.utime(filepath, (modTime, modTime))
-
+    os.utime(filepath, (get_mod_time(), get_mod_time()))
 
 # Set Creation-Datetime to File
 def set_creation_time(filepath):
@@ -29,23 +38,25 @@ def set_creation_time(filepath):
 
     if user_os == 'Windows':
         # Set on Windows
-        setctime(filepath, modTime)
+        setctime(filepath, get_mod_time())
     elif user_os == 'Darwin':
         # Set on Mac
-        os.system('SetFile -d "{}" {}'.format(date_str, new_filepath))
+        os.system('SetFile -d "{}" {}'.format(get_date_str(), new_filepath))
 
 
-def set_list(start='', recursive=True):
+def reset_list():
     global my_list
     my_list = []
 
-    if recursive:
-        basepath = '{}/**/*'
-    else:
-        basepath = '{}/*'
 
-    for f in sorted(glob.iglob(basepath.format(start), recursive=True)):
-        if f.startswith(('venv', '.git')) == False and f != script:
+def set_list(start='', recursive=True):
+    reset_list()
+    base_path = '{}/*'.format(start)
+    if recursive:
+        base_path += '*/*'
+
+    for f in sorted(glob.iglob(base_path, recursive=True)):
+        if not f.startswith(('venv', '.git')) and f != script:
             fpath = os.path.realpath(f)
             if os.path.isfile(fpath):
                 my_list.append(fpath)
@@ -70,12 +81,12 @@ def runMain():
     global l_count
     global s_update_files
 
-    # SG Theme
+    # # SG Theme
     sg.theme('LightBlue2')  # Add a touch of color
 
-    # SG Icons
-    root = os.path.split(__file__)[0]
-    images = os.path.join(root, 'assets/icon.ico')
+    # # SG Icons
+    # root = os.path.split(__file__)[0]
+    # images = os.path.join(root, 'assets/icon.ico')
 
     # All the stuff inside your window.
 
@@ -91,7 +102,11 @@ def runMain():
     ]
 
     # Create the Window
-    window = sg.Window('Datei-Daten anpassen', layout, icon=images).Finalize()
+    window = sg.Window(
+        'Datei-Daten anpassen',
+        layout
+        # icon=images
+    ).Finalize()
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
