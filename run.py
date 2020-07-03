@@ -5,6 +5,7 @@ import datetime
 import glob
 from win32_setctime import setctime
 import PySimpleGUI as sg
+from win32file import SetFileTime
 
 # Variables
 script = os.path.basename(__file__)
@@ -38,7 +39,8 @@ def set_creation_time(filepath):
 
     if user_os == 'Windows':
         # Set on Windows
-        setctime(filepath, get_mod_time())
+        if os.path.isfile(filepath):
+            setctime(filepath, get_mod_time())
     elif user_os == 'Darwin':
         # Set on Mac
         os.system('SetFile -d "{}" {}'.format(get_date_str(), new_filepath))
@@ -58,11 +60,11 @@ def set_list(start='', recursive=True):
     for f in sorted(glob.iglob(base_path, recursive=True)):
         if not f.startswith(('venv', '.git')) and f != script:
             fpath = os.path.realpath(f)
-            if os.path.isfile(fpath):
-                my_list.append(fpath)
+            my_list.append(fpath)
 
 
 def get_list():
+    global my_list
     return my_list
 
 
