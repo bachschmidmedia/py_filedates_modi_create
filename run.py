@@ -5,7 +5,6 @@ import datetime
 import glob
 from win32_setctime import setctime
 import PySimpleGUI as sg
-from win32file import SetFileTime
 
 # Variables
 script = os.path.basename(__file__)
